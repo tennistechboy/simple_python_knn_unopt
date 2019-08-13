@@ -1,0 +1,41 @@
+import xlrd
+
+loc = ("iris.xlsx") 
+wb = xlrd.open_workbook(loc) 
+sheet = wb.sheet_by_index(0) 
+
+Dataset = []
+num_attributes = sheet.ncols - 1
+data_size=sheet.nrows
+K_value=int(input("Enter the value of K"))
+
+
+dist_list=[]
+query_data=[]
+
+for step in range(1,data_size):
+    Dataset.append(sheet.row_values(step))
+
+loc = ("iris_test.xlsx") 
+wb = xlrd.open_workbook(loc) 
+test = wb.sheet_by_index(0) 
+
+for step in range(0,test.nrows):
+    query_data.append(test.row_values(step))
+
+
+for hyper in range(test.nrows):
+    dist_list=[]
+    for step in range(data_size-1):
+        sub_list=[]
+        dist=0
+        for hyper_step in range(num_attributes):
+            dist+=abs(float(query_data[hyper][hyper_step])-float(Dataset[step][hyper_step]))
+        sub_list.append(dist)
+        sub_list.append(Dataset[step][num_attributes])
+        dist_list.append(sub_list)
+    dist_list.sort()
+    K_list=[]
+    for step in range(K_value):
+        K_list.append(dist_list[step][1])
+    print(max(set(K_list), key=K_list.count))  
